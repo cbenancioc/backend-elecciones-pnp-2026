@@ -19,7 +19,7 @@ const pool = new Pool({
     database: 'postgres', // Apuntamos a la base de datos donde están sus mapas
     password: 'Ybena230297$$', // Al usar el modo 'trust', el motor dejará entrar sin validar esta clave
     port: 5432,
-    ssl: { rejectUnauthorized: false
+    ssl: { rejectUnauthorized: false }
 });
 
 pool.connect()
