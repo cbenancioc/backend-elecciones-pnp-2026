@@ -14,12 +14,12 @@ app.use(express.json());
 
 // --- 1. CONFIGURACIÓN (MODO CONFIANZA LOCAL) ---
 const pool = new Pool({
-    user: 'postgres',
-    host: 'db.fdexkgchsrzclllpxsrf.supabase.co',
-    database: 'postgres', // Apuntamos a la base de datos donde están sus mapas
-    password: 'Ybena230297$$', // Al usar el modo 'trust', el motor dejará entrar sin validar esta clave
-    port: 5432,
-    ssl: { rejectUnauthorized: false } //
+    user: 'postgres.fdexkgchsrzclllpxsrf', // <-- Usuario actualizado con su código
+    host: 'aws-0-sa-east-1.pooler.supabase.com', // <-- El nuevo host (puente IPv4)
+    database: 'postgres', // Manténgalo como postgres en minúsculas
+    password: 'Ybena230297$$', // Su contraseña original
+    port: 5432, // El puerto indicado en su pantalla
+    ssl: { rejectUnauthorized: false } // <-- ¡Línea vital para que Render no bloquee la seguridad!
 });
 
 pool.connect()
