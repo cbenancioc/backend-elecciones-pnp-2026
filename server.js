@@ -69,6 +69,16 @@ app.post('/api/novedades', async (req, res) => {
 
 // --- 3. INICIAR EL SERVIDOR ---
 const PORT = 3000;
+// NUEVA RUTA TÁCTICA: Extraer puntos críticos para el mapa
+app.get('/puntos-criticos', async (req, res) => {
+    try {
+        const resultado = await pool.query('SELECT * FROM puntos_criticos');
+        res.json(resultado.rows);
+    } catch (err) {
+        console.error("Error en extracción:", err.message);
+        res.status(500).send("Error del servidor");
+    }
+});
 app.listen(PORT, () => {
     console.log(`\n======================================================`);
     console.log(`🛡️  SERVIDOR C.C. OPERACIONES INICIADO EN PUERTO ${PORT}`);
