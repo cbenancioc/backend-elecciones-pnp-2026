@@ -14,12 +14,8 @@ app.use(express.json());
 
 // --- 1. CONFIGURACIÓN (MODO CONFIANZA LOCAL) ---
 const pool = new Pool({
-    user: 'postgres.fdexkgchsrzclllpxsrf', // <-- Usuario actualizado con su código
-    host: 'aws-0-sa-east-1.pooler.supabase.com', // <-- El nuevo host (puente IPv4)
-    database: 'postgres', // Manténgalo como postgres en minúsculas
-    password: 'Ybena230297$$', // Su contraseña original
-    port: 6543, // El puerto indicado en su pantalla
-    ssl: { rejectUnauthorized: false } // <-- ¡Línea vital para que Render no bloquee la seguridad!
+    connectionString: 'postgresql://postgres.fdexkgchsrzclllpxsrf:Ybena230297%24%24@aws-0-sa-east-1.pooler.supabase.com:6543/postgres',
+    ssl: { rejectUnauthorized: false }
 });
 pool.connect()
     .then(() => console.log('✅ ¡Conectado exitosamente a PostgreSQL (test_geo) en Modo Confianza!'))
