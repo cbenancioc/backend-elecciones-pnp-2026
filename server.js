@@ -18,7 +18,7 @@ const pool = new Pool({
     host: 'aws-0-sa-east-1.pooler.supabase.com', // <-- El nuevo host (puente IPv4)
     database: 'postgres', // Manténgalo como postgres en minúsculas
     password: 'Ybena230297$$', // Su contraseña original
-    port: 5432, // El puerto indicado en su pantalla
+    port: 6543, // El puerto indicado en su pantalla
     ssl: { rejectUnauthorized: false } // <-- ¡Línea vital para que Render no bloquee la seguridad!
 });
 pool.connect()
