@@ -14,7 +14,11 @@ app.use(express.json());
 
 // --- 1. CONFIGURACIÓN (MODO CONFIANZA LOCAL) ---
 const pool = new Pool({
-    connectionString: 'postgresql://postgres.fdexkgchsrzclllpxsrf:Ybena230297%24%24@aws-0-sa-east-1.pooler.supabase.com:6543/postgres',
+    user: 'postgres.fdexkgchsrzclllpxsrf',
+    host: 'aws-0-sa-east-1.pooler.supabase.com',
+    database: 'postgres',
+    password: 'Ybena230297PNP', // <-- Su nueva clave 100% limpia
+    port: 5432, // <-- Volvemos al puerto estándar del puente
     ssl: { rejectUnauthorized: false }
 });
 pool.connect()
