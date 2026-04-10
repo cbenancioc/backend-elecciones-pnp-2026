@@ -21,7 +21,6 @@ const pool = new Pool({
     port: 5432, // El puerto indicado en su pantalla
     ssl: { rejectUnauthorized: false } // <-- ¡Línea vital para que Render no bloquee la seguridad!
 });
-
 pool.connect()
     .then(() => console.log('✅ ¡Conectado exitosamente a PostgreSQL (test_geo) en Modo Confianza!'))
     .catch(err => console.error('❌ Error de conexión:', err.message));
