@@ -1,87 +1,54 @@
-/**
- * SERVIDOR BACKEND - ELECCIONES 2026 (CC. OPERACIONES)
- * Este servidor hace de puente entre PostgreSQL/PostGIS y el Aplicativo Web (React).
- */
-
 const express = require('express');
-const cors = require('cors');
 const { Pool } = require('pg');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
+const port = process.env.PORT || 10000;
 
+// Configuración de CORS para permitir la conexión con el mapa
 app.use(cors());
 app.use(express.json());
 
-// --- 1. CONFIGURACIÓN (MODO CONFIANZA LOCAL) ---
+// Conexión con la Base de Datos Supabase
 const pool = new Pool({
-    connectionString: "postgresql://postgres.fdexkgchsrzclllpxsrf:Ybena230297PNP@aws-1-sa-east-1.pooler.supabase.com:6543/postgres",
-    ssl: { rejectUnauthorized: false }
-});
-pool.connect()
-    .then(() => console.log('✅ ¡Conectado exitosamente a PostgreSQL (test_geo) en Modo Confianza!'))
-    .catch(err => console.error('❌ Error de conexión:', err.message));
-
-// --- 2. RUTAS (ENDPOINTS) DE LA API ---
-
-app.post('/api/login', async (req, res) => {
-    const { dni, cip } = req.body;
-    try {
-        res.json({
-            success: true,
-            user: { dni, cip, role: 'agente', nombre: 'AGENTE AUTENTICADO' }
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Error en el servidor' });
-    }
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-app.get('/api/locales', async (req, res) => {
-    try {
-        const query = `
-            SELECT 
-                id, 
-                nombre_del AS nombre, 
-                direccion AS direccion, 
-                distrito AS distrito, 
-                mesas, 
-                electores,
-                ST_Y(geom) as lat, 
-                ST_X(geom) as lng
-            FROM locales;
-        `;
-        const result = await pool.query(query);
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Error al extraer locales:', error.message);
-        res.status(500).json({ error: 'Falla al extraer cartografía.' });
-    }
+// --- RUTAS DEL SISTEMA ---
+
+// 1. Ruta de Prueba de Vida del Servidor
+app.get('/', (req, res) => {
+  res.send('Servidor de Inteligencia PNP Operativo');
 });
 
-app.post('/api/novedades', async (req, res) => {
-    const { agente_dni, local_id, tipo_incidencia, prioridad, descripcion } = req.body;
-    try {
-        console.log(`🚨 ALERTA RECIBIDA: ${tipo_incidencia} (Prioridad: ${prioridad})`);
-        res.json({ success: true, message: 'Novedad registrada' });
-    } catch (error) {
-        res.status(500).json({ error: 'Error al registrar la novedad' });
-    }
-});
-
-// --- 3. INICIAR EL SERVIDOR ---
-const PORT = 3000;
-// NUEVA RUTA TÁCTICA: Extraer puntos críticos para el mapa
+// 2. Ruta para Puntos Críticos (Existente)
 app.get('/puntos-criticos', async (req, res) => {
-    try {
-        const resultado = await pool.query('SELECT * FROM puntos_criticos');
-        res.json(resultado.rows);
-    } catch (err) {
-        console.error("Error en extracción:", err.message);
-        res.status(500).send("Error del servidor");
-    }
+  try {
+    const result = await pool.query('SELECT * FROM puntos_criticos');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error en servidor');
+  }
 });
-app.listen(PORT, () => {
-    console.log(`\n======================================================`);
-    console.log(`🛡️  SERVIDOR C.C. OPERACIONES INICIADO EN PUERTO ${PORT}`);
-    console.log(`🌐 API escuchando en: http://127.0.0.1:${PORT}`);
-    console.log(`======================================================\n`);
+
+// 3. NUEVA RUTA: VINCULACIÓN POLICIAL (Para App.js)
+app.get('/personal-asignado', async (req, res) => {
+  try {
+    // Consulta a la tabla que contiene el personal y sus locales asignados
+    const result = await pool.query('SELECT * FROM fuerza_efectiva_elecciones');
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error en consulta de personal:", err.message);
+    res.status(500).json({ error: "Error interno del servidor al obtener personal" });
+  }
+});
+
+// Inicio del Servidor
+app.listen(port, () => {
+  console.log(`Servidor táctico corriendo en el puerto ${port}`);
 });
